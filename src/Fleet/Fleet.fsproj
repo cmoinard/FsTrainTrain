@@ -6,7 +6,6 @@
 
     <ItemGroup>
         <Compile Include="Locomotive.fs" />
-        <Compile Include="UseCases.fs" />
         <Compile Include="Migrations/Initial.fs" />
         <Compile Include="Migrations/Migration.fs" />
         <Compile Include="Database.fs" />
@@ -28,6 +27,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Utils.Core\Utils.Core.fsproj" />
       <ProjectReference Include="..\Utils.Web\Utils.Web.fsproj" />
     </ItemGroup>
 </Project>

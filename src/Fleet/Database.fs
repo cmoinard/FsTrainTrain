@@ -7,7 +7,7 @@ open FSharp.Data.Npgsql
 [<Literal>]
 let private connectionStringForTypeCheck = TextFile<"Database.typecheck">.Text
 
-type private DbFleet = NpgsqlConnection<connectionStringForTypeCheck, ReuseProvidedTypes = true>
+type private DbFleet = NpgsqlConnection<connectionStringForTypeCheck>
 
 let getAll (connectionString: string) =
     task {
@@ -25,8 +25,8 @@ let getAll (connectionString: string) =
                     Id = r.id
                     Brand = r.brand
                     Model = r.model
-                    WeightInTons = r.weight_in_tons * 1m<ton>
-                    MaxTractionInTons = r.max_traction_in_tons * 1m<ton>
+                    Weight = r.weight_in_tons * 1m<ton>
+                    MaxTraction = r.max_traction_in_tons * 1m<ton>
                 })
             |> Seq.toList
         
@@ -51,9 +51,27 @@ let getById (connectionString: string) id =
                     Id = r.id
                     Brand = r.brand
                     Model = r.model
-                    WeightInTons = r.weight_in_tons * 1m<ton>
-                    MaxTractionInTons = r.max_traction_in_tons * 1m<ton>
+                    Weight = r.weight_in_tons * 1m<ton>
+                    MaxTraction = r.max_traction_in_tons * 1m<ton>
                 })
         
         return locomotive
+    }
+    
+let insert (connectionString: string) newLoco =
+    task {
+        use cmd =
+            DbFleet.CreateCommand<"
+                INSERT INTO locomotives (brand, model, weight_in_tons, max_traction_in_tons)
+                VALUES (@brand, @model, @weight, @max_traction)
+            ">(connectionString)
+            
+        let! _ =
+            cmd.AsyncExecute(
+                newLoco.Brand,
+                newLoco.Model,
+                decimal newLoco.Weight,
+                decimal newLoco.MaxTraction)
+            
+        return ()
     }

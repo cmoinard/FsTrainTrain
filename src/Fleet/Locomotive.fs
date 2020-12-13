@@ -8,13 +8,13 @@ type Locomotive = {
     Id: LocomotiveId
     Brand: string
     Model: string
-    WeightInTons: decimal<ton>
-    MaxTractionInTons: decimal<ton>
+    Weight: decimal<ton>
+    MaxTraction: decimal<ton>
 }
 
 type NewLocomotive = {
     Brand: string
     Model: string
-    WeightInTons: decimal<ton>
-    MaxTractionInTons: decimal<ton>
+    Weight: decimal<ton>
+    MaxTraction: decimal<ton>
 }
