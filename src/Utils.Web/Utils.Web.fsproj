@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net5.0</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Compile Include="JsonHelpers.fs" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Saturn" Version="0.15.0-preview01" />
+    </ItemGroup>
+
+</Project>
