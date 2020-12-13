@@ -12,10 +12,10 @@ type private DbFleet = NpgsqlConnection<connectionStringForTypeCheck, ReuseProvi
 let getAll (connectionString: string) =
     task {
         use cmd =
-            DbFleet.CreateCommand<
-                "SELECT id, brand, model, weight_in_tons, max_traction_in_tons
-                FROM locomotives"
-                >(connectionString)
+            DbFleet.CreateCommand<"
+                SELECT id, brand, model, weight_in_tons, max_traction_in_tons
+                FROM locomotives
+                ">(connectionString)
         let! result = cmd.AsyncExecute()
         
         let locomotives =
@@ -33,3 +33,27 @@ let getAll (connectionString: string) =
         return locomotives
     }
     
+let getById (connectionString: string) id =
+    task {
+        use cmd =            
+            DbFleet.CreateCommand<"
+                SELECT id, brand, model, weight_in_tons, max_traction_in_tons
+                FROM locomotives
+                WHERE id = @id
+            ", SingleRow = true>(connectionString)
+        
+        let! dbLocomotive = cmd.AsyncExecute(id)
+        
+        let locomotive =
+            dbLocomotive
+            |> Option.map (fun r ->
+                {
+                    Id = r.id
+                    Brand = r.brand
+                    Model = r.model
+                    WeightInTons = r.weight_in_tons * 1m<ton>
+                    MaxTractionInTons = r.max_traction_in_tons * 1m<ton>
+                })
+        
+        return locomotive
+    }

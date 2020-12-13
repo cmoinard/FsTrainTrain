@@ -22,6 +22,7 @@
       <PackageReference Include="FSharp.Data.LiteralProviders" Version="0.3.5" />
       <PackageReference Include="FSharp.Data.Npgsql5" Version="0.8.0" />
       <PackageReference Include="Npgsql" Version="5.0.0" />
+      <PackageReference Include="Ply" Version="0.3.1" />
       <PackageReference Include="Saturn" Version="0.15.0-preview01" />
       <PackageReference Include="Simple.Migrations" Version="0.9.21" />
     </ItemGroup>
