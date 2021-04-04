@@ -6,6 +6,7 @@
 
     <ItemGroup>
         <Compile Include="JsonHelpers.fs" />
+        <Compile Include="ErrorDto.fs" />
     </ItemGroup>
 
     <ItemGroup>

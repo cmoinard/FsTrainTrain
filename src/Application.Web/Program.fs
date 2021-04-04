@@ -14,7 +14,7 @@ let mainRouter = router {
     
     get "/maj" (migrate |> toJson)
     
-    forward "/locomotives" Fleet.Router.locomotive
+    forward "/locomotives" Fleet.Routers.Locomotive.router
 }
 
 let app = application {

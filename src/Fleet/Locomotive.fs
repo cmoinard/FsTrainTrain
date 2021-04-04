@@ -9,7 +9,7 @@ type Locomotive = {
     Brand: string
     Model: string
     Weight: decimal<ton>
-    MaxTraction: decimal<ton>
+    MaxTraction : decimal<ton>
 }
 
 type NewLocomotive = {

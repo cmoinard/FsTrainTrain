@@ -45,8 +45,8 @@ type ValidationBuilder() =
     member __.MergeSources(v1, v2) =
         match v1, v2 with
         | Valid v1', Valid v2' -> Valid (v1', v2')
-        | Invalid errs, _ -> Invalid errs
-        | _, Invalid errs -> Invalid errs
+        | Invalid errs1, Invalid errs2 -> Invalid (errs1 @ errs2)
+        | Invalid errs, _ | _, Invalid errs -> Invalid errs
         
     member __.BindReturn(x, f) = map f x
 

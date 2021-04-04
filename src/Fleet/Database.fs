@@ -66,7 +66,7 @@ let insert (connectionString: string) newLoco =
                 VALUES (@brand, @model, @weight, @max_traction)
             ">(connectionString)
             
-        let! _ =
+        let! eee =
             cmd.AsyncExecute(
                 newLoco.Brand,
                 newLoco.Model,
