@@ -5,12 +5,17 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Compile Include="Locomotive.fs" />
+        <Compile Include="Database.fs" />
         <Compile Include="Migrations/Initial.fs" />
         <Compile Include="Migrations/Migration.fs" />
-        <Compile Include="Database.fs" />
-        <Compile Include="HttpHandlers\LocomotiveCreation.fs" />
-        <Compile Include="Routers\Locomotive.fs" />
+        
+        <Compile Include="Locomotives\DbModels.fs" />
+        
+        <Compile Include="Locomotives\Database.fs" />
+        
+        <Compile Include="Locomotives\Dto.fs" />
+        
+        <Compile Include="Locomotives\Web.fs" />
         <Content Include="appsettings.json">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </Content>

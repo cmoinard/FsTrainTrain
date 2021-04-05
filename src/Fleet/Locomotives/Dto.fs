@@ -1,23 +1,30 @@
-module Fleet.HttpHandlers.LocomotiveCreation
+module Fleet.Locomotives.Dto
 
-open Fleet
-
+open Fleet.Locomotives.DbModels
 open Utils.Core.Validations.Validation
 open Utils.Core.Validations.NumberValidation
 open Utils.Core.Validations.StringValidation
-open Giraffe
-open Saturn
-open Saturn.ControllerHelpers.Response
 open Utils.Web.ErrorDto
-open FSharp.Control.Tasks.V2
 
-type NewLocomotiveDto =
+type LocomotiveDto =
     {
+        Id: int
         Brand: string
         Model: string
         WeightInTons: decimal
         MaxTractionInTons: decimal
     }
+    
+module LocomotiveDto =
+    let fromDbModel (dbModel: DbModels.DbLocomotive) =
+        {
+            Id = dbModel.Id
+            Brand = dbModel.Brand
+            Model = dbModel.Model
+            WeightInTons = dbModel.WeightInTons
+            MaxTractionInTons = dbModel.MaxTractionInTons
+        }
+    
     
 type CreationError =
     | BrandIsRequired
@@ -40,9 +47,25 @@ module CreationError =
         errs
         |> List.map mapError
         |> toProblemDetails
-    
+
+
+type NewLocomotiveDto =
+    {
+        Brand: string
+        Model: string
+        WeightInTons: decimal
+        MaxTractionInTons: decimal
+    }
     
 module NewLocomotiveDto =
+    let toDbModel dto : DbNewLocomotive =
+        {
+            Brand = dto.Brand 
+            Model = dto.Model 
+            WeightInTons = dto.WeightInTons 
+            MaxTractionInTons = dto.MaxTractionInTons 
+        }
+        
     let create brand model weight maxTraction =        
         let validateBrand = isNotEmpty BrandIsRequired
         let validateModel = isNotEmpty ModelIsRequired
@@ -58,31 +81,7 @@ module NewLocomotiveDto =
             return {
                 Brand = brand'
                 Model = model'
-                Weight = weight' * 1m<ton>
-                MaxTraction = maxTraction' * 1m<ton>
+                WeightInTons = weight'
+                MaxTractionInTons = maxTraction'
             }
         }
-
-let create connStr : HttpHandler =
-    fun next ctx -> task {
-        let! dto = ctx.BindJsonAsync<NewLocomotiveDto>()
-        
-        let newLoco =
-            NewLocomotiveDto.create
-                dto.Brand
-                dto.Model
-                dto.WeightInTons
-                dto.MaxTractionInTons
-        
-        return!
-            match newLoco with
-            | Invalid errs ->
-                let problem = errs |> CreationError.problem                        
-                badRequest ctx problem
-                
-            | Valid l ->
-                task {
-                    do! Database.insert connStr l
-                    return! ok ctx next
-                }
-    }
