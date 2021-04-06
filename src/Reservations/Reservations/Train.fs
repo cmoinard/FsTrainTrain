@@ -20,6 +20,7 @@ type TrainInitializationError =
     
 type TrainReservationError =
     | NegativeNumberOfSeats
+    | CarNumberNotFound
     
 type TrainError =
     | InitializationError of TrainInitializationError
@@ -49,4 +50,7 @@ module Train =
             Ok { Cars = cars }
             
     let reserveSeatsIn carNumber seatsCount train : Result<Train, TrainError> =
-        Error (ReservationError NegativeNumberOfSeats)
+        if seatsCount <= 0 then
+            Error (ReservationError NegativeNumberOfSeats)
+        else
+            Error (ReservationError CarNumberNotFound)
