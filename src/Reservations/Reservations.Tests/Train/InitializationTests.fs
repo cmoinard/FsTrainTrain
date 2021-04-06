@@ -1,29 +1,30 @@
-module Reservations.Train.InitializationTests
+module Reservations.Tests.Train.InitializationTests
 
 open Reservations
+
 open Xunit
 open Swensen.Unquote
 
 [<Fact>]
 let ``Cannot create a train without car`` () =
-    let actual = init []
+    let actual = Train.init []
     
-    actual =! Error EmptyCapacities
+    actual =! Error (InitializationError EmptyCapacities)
     
 [<Theory>]
 [<InlineData(-1)>]
 [<InlineData(0)>]
 let ``Cannot create a train with a negative capacity`` capacity =
-    let actual = init [ capacity ]
+    let actual = Train.init [ capacity ]
     
-    actual =! Error InitialCapacityBelowZero
+    actual =! Error (InitializationError InitialCapacityBelowZero)
     
 [<Fact>]
 let ``Can create a valid train`` () =
     let actual =
         [ 100; 200 ]
-        |> init
-        |> Result.map cars
+        |> Train.init
+        |> Result.map Train.cars
     
     let expectedCars =
         [

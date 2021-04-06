@@ -8,6 +8,7 @@
         <Compile Include="Validations\Validation.fs" />
         <Compile Include="Validations\NumberValidation.fs" />
         <Compile Include="Validations\StringValidation.fs" />
+        <Compile Include="Result.fs" />
     </ItemGroup>
 
 </Project>

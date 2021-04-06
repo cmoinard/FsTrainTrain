@@ -17,6 +17,13 @@ type Train = private {
 type TrainInitializationError =
     | EmptyCapacities
     | InitialCapacityBelowZero
+    
+type TrainReservationError =
+    | NegativeNumberOfSeats
+    
+type TrainError =
+    | InitializationError of TrainInitializationError
+    | ReservationError of TrainReservationError
 
 module Train =
     let cars train = train.Cars
@@ -24,10 +31,10 @@ module Train =
     let init carCapacities =
         match carCapacities with
         | [] ->
-            Error EmptyCapacities
+            Error (InitializationError EmptyCapacities)
         
         | xs when xs |> List.exists (fun x -> x <= 0) ->
-            Error InitialCapacityBelowZero
+            Error (InitializationError InitialCapacityBelowZero)
             
         | _ ->
             let cars =
@@ -40,3 +47,6 @@ module Train =
                     })
             
             Ok { Cars = cars }
+            
+    let reserveSeatsIn carNumber seatsCount train : Result<Train, TrainError> =
+        Error (ReservationError NegativeNumberOfSeats)
