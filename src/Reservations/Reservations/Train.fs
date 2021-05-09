@@ -75,16 +75,12 @@ module Train =
                 let error = NoSeatsAvailable (carNumber, availableSeats)
                 Error (ReservationError error)
                 
-            | _ ->
-                let matchesCarNumber car =
-                    car.Number = carNumber
-                    
-                let increaseReservedSeats car =
-                    { car with ReservedSeats = car.ReservedSeats + seatsCount }
-                    
+            | _ ->                    
                 Ok {
                     Cars =
                         train.Cars
-                        |> List.replaceWhen matchesCarNumber increaseReservedSeats
+                        |> List.replaceWhen
+                            (fun car -> car.Number = carNumber)
+                            (fun car -> { car with ReservedSeats = car.ReservedSeats + seatsCount })
                 }
             
