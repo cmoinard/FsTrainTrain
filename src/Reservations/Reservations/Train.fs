@@ -1,5 +1,8 @@
 namespace Reservations
 
+open Utils.Core.Numbers
+open Utils.Core
+
 type CarNumber = CarNumber of int
 type TrainNumber = TrainNumber of int
 
@@ -58,26 +61,30 @@ module Train =
             Ok { Cars = cars }
             
     let reserveSeatsIn carNumber seatsCount train : Result<Train, TrainError> =
-        match (train |> getCar carNumber) with
-        | None -> Error (ReservationError CarNumberNotFound)
-        | Some car ->
-            if seatsCount = 0 then
-                Error (ReservationError NegativeNumberOfSeats)
-            else
-                let availableSeats = car |> Car.availableSeats
-                if seatsCount > availableSeats then
-                    let error = NoSeatsAvailable (carNumber, availableSeats)
-                    Error (ReservationError error)
-                else
-                    let newTrain = 
-                        {
-                            Cars =
-                                train.Cars
-                                |> List.map (fun car ->
-                                    if car.Number = carNumber then
-                                        { car with ReservedSeats = car.ReservedSeats + seatsCount }
-                                    else
-                                        car)
-                        }
-                    Ok newTrain
+        let carOption = train |> getCar carNumber
+        match seatsCount, carOption with
+        | Negative, _ ->
+            Error (ReservationError NegativeNumberOfSeats)
+            
+        | _, None ->
+            Error (ReservationError CarNumberNotFound)
+            
+        | _, Some car ->
+            match car |> Car.availableSeats with
+            | availableSeats when availableSeats < seatsCount ->
+                let error = NoSeatsAvailable (carNumber, availableSeats)
+                Error (ReservationError error)
+                
+            | _ ->
+                let matchesCarNumber car =
+                    car.Number = carNumber
+                    
+                let increaseReservedSeats car =
+                    { car with ReservedSeats = car.ReservedSeats + seatsCount }
+                    
+                Ok {
+                    Cars =
+                        train.Cars
+                        |> List.replaceWhen matchesCarNumber increaseReservedSeats
+                }
             

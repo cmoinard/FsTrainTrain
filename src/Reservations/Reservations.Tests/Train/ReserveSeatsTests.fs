@@ -8,13 +8,15 @@ open Xunit
 open Swensen.Unquote
 open Xunit.Sdk
 
-[<Fact>]
-let ``Cannot reserve empty seats`` () =
+[<Theory>]
+[<InlineData(0)>]
+[<InlineData(-1)>]
+let ``Cannot reserve empty seats`` seats =
     let carNumber = CarNumber 1
     
     let actual =
         Train.init [ 100 ; 200 ]
-        >>= Train.reserveSeatsIn carNumber 0
+        >>= Train.reserveSeatsIn carNumber seats
         
     actual =! Error (ReservationError NegativeNumberOfSeats)
     
