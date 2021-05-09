@@ -7,6 +7,7 @@
 
     <ItemGroup>
       <Compile Include="Train.fs" />
+      <Compile Include="Reservation.fs" />
     </ItemGroup>
 
     <ItemGroup>

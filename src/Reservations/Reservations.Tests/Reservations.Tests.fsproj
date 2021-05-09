@@ -11,6 +11,7 @@
     <ItemGroup>
         <Compile Include="Train\InitializationTests.fs" />
         <Compile Include="Train\ReserveSeatsTests.fs" />
+        <Compile Include="ReservationTests.fs" />
         <Compile Include="Program.fs" />
     </ItemGroup>
 
