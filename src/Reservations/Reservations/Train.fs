@@ -8,6 +8,9 @@ type Car = {
     Capacity: int
     ReservedSeats: int
 }
+module Car =
+    let availableSeats car =
+        car.Capacity - car.ReservedSeats
 
 type Train = private {
     Cars: Car list
@@ -19,8 +22,9 @@ type TrainInitializationError =
     | InitialCapacityBelowZero
     
 type TrainReservationError =
-    | NegativeNumberOfSeats
     | CarNumberNotFound
+    | NegativeNumberOfSeats
+    | NoSeatsAvailable of CarNumber * int 
     
 type TrainError =
     | InitializationError of TrainInitializationError
@@ -29,12 +33,16 @@ type TrainError =
 module Train =
     let cars train = train.Cars
     
+    let getCar carNumber train =
+        train.Cars
+        |> List.tryFind (fun c -> c.Number = carNumber)
+    
     let init carCapacities =
         match carCapacities with
         | [] ->
             Error (InitializationError EmptyCapacities)
         
-        | xs when xs |> List.exists (fun x -> x <= 0) ->
+        | xs when xs |> List.exists (fun c -> c <= 0) ->
             Error (InitializationError InitialCapacityBelowZero)
             
         | _ ->
@@ -50,7 +58,26 @@ module Train =
             Ok { Cars = cars }
             
     let reserveSeatsIn carNumber seatsCount train : Result<Train, TrainError> =
-        if seatsCount <= 0 then
-            Error (ReservationError NegativeNumberOfSeats)
-        else
-            Error (ReservationError CarNumberNotFound)
+        match (train |> getCar carNumber) with
+        | None -> Error (ReservationError CarNumberNotFound)
+        | Some car ->
+            if seatsCount = 0 then
+                Error (ReservationError NegativeNumberOfSeats)
+            else
+                let availableSeats = car |> Car.availableSeats
+                if seatsCount > availableSeats then
+                    let error = NoSeatsAvailable (carNumber, availableSeats)
+                    Error (ReservationError error)
+                else
+                    let newTrain = 
+                        {
+                            Cars =
+                                train.Cars
+                                |> List.map (fun car ->
+                                    if car.Number = carNumber then
+                                        { car with ReservedSeats = car.ReservedSeats + seatsCount }
+                                    else
+                                        car)
+                        }
+                    Ok newTrain
+            
