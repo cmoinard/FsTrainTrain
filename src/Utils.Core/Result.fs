@@ -9,3 +9,7 @@ module Result =
     let result = ResultBuilder()
     
     let (>>=) v f = Result.bind f v
+    
+    let toOption = function
+        | Error _ -> None
+        | Ok v -> Some v
